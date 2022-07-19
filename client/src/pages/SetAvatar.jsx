@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import loader from "../assets/loader.gif";
+import loader from "../assets/loader.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { setAvatarRoute } from "../utils/APIRoutes";
+// import { setAvatarRoute } from "../utils/APIRoutes";
 import { Buffer } from "buffer";
 
 export default function SetAvatar() {
@@ -23,14 +23,32 @@ export default function SetAvatar() {
     theme: "dark",
   };
 
-  const setProfilePicture = async () => {};
+  const setProfilePicture = async () => {
+    if (selectedAvatar === undefined) {
+      toast.error("Please select an avatar", toastOptions);
+    } else {
+      const user = await JSON.parse(localStorage.getItem("chat-app-user"));
+      const data =  await axios.post(`${setAvatars}/${user._id}`, {
+        image: avatars[selectedAvatar],
+      });
+      console.log({data});
+      if (data.isSet) {
+        user.isAvatarImageSet = true;
+        user.avatarImage = data.image;
+        localStorage.setItem("chat-app-user", JSON.stringify(user));
+        navigate('/'); 
+      } else {
+        toast.error("Error setting avatar. Please try again", toastOptions);
+      }
+    }
+  };
 
   useEffect(() => {
     async function fecthData() {
       const data = [];
-      for (let i = 0; i < 10; i++) {
-        const image = await axios.get(`${api}/${Math.round(Math.random()*10)}`);
-        const buffer = new Buffer(image.data);      
+      for (let i = 0; i < 4; i++) {
+        const image = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
+        const buffer = new Buffer(image.data);
         data.push(buffer.toString("base64"));
       }
       setAvatars(data);
@@ -38,32 +56,37 @@ export default function SetAvatar() {
     }
     fecthData();
   }, []);
-  
+
   return (
     <>
-      <Container>
-        <div className="title-container">
-          <h1>Pick an avatar as your profile picture</h1>
-          <div className="avatars">
-            {avatars.map((avatar, index) => {
-              return (
-                <div
-                  className={`avatar ${
-                    selectedAvatar === index ? "selected" : ""
-                  }`}
-                >
-                  <img
-                    key={index}
-                    src={`data:image/svg+xml;base64,${avatar}`}
-                    alt="avatar"
-                    onClick={() => setSelectedAvatar(index)}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </Container>
+      {
+        isLoading ? <Container>
+          <img src={loader} alt="loader" />
+        </Container> : (
+          <Container>
+            <div className="title-container">
+              <h1>Pick an avatar as your profile picture</h1>
+            </div>
+            <div className="avatars">
+              {avatars.map((avatar, index) => {
+                return (
+                  <div
+                    className={`avatar ${selectedAvatar === index ? "selected" : ""
+                      }`}
+                  >
+                    <img
+                      key={index}
+                      src={`data:image/svg+xml;base64,${avatar}`}
+                      alt="avatar"
+                      onClick={() => setSelectedAvatar(index)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <button className="submit-btn" onClick={setProfilePicture}>Set as profile picture</button>
+          </Container>
+        )}
       <ToastContainer />
     </>
   );
@@ -83,7 +106,13 @@ const Container = styled.div`
   }
 
   .title-container {
+    display: flex;
+    justify-content: center;
+    align-item: center;
+    flex-direction: column;
+    gap: 3rem;
     h1 {
+      text-align: center;
       color: #fff;
     }
   }
@@ -93,9 +122,33 @@ const Container = styled.div`
     gap: 2rem;
     .avatar {
       border: 0.4rem solid transparent;
+      padding: 0.4rem;
+      border-radius: 5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.5s ease-in-out;
       img {
         height: 6rem;
       }
     }
+    .selected {
+      border: 0.4rem solid #fff;
+    }
   }
+  .submit-btn {
+      background-color: #515c6d;
+      color: #fff;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      transition: 0.5s ease-in-out;
+      &:hover {
+        background-color: #6e6f74;
+      }
+    }
 `;
