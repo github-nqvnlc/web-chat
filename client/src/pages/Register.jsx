@@ -8,7 +8,7 @@ import { registerRoute } from "../utils/APIRoutes";
 
 function Register() {
   const navitage = useNavigate();
-  const [value, setValue] = useState({
+  const [values, setValues] = useState({
     username: "",
     email: "",
     password: "",
@@ -30,7 +30,7 @@ function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
-      const { password, username, email } = value;
+      const { password, username, email } = values;
       const { data } = await axios.post(registerRoute, {
         username,
         email,
@@ -39,15 +39,15 @@ function Register() {
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       }
-      if (data.status === false) {
+      if (data.status === true) {
         localStorage.setItem("chat-app-user", JSON.stringify(data.user));
-        navitage("/");
+        navitage("/setAvatar");
       }
     }
   };
 
   const handleValidation = () => {
-    const { password, confirmPassword, username, email } = value;
+    const { password, confirmPassword, username, email } = values;
     if (password !== confirmPassword) {
       toast.error(
         "Password and confirm password should be same.",
@@ -71,7 +71,7 @@ function Register() {
   };
 
   const handleChange = (event) => {
-    setValue({ ...value, [event.target.name]: event.target.value });
+    setValues({ ...values, [event.target.name]: event.target.value });
   };
   return (
     <>

@@ -18,7 +18,7 @@ function Login() {
     if (localStorage.getItem("chat-app-user")) {
       navitage("/");
     }
-  }, []);
+  });
   const toastOptions = {
     position: "top-right",
     autoClose: 5000,
@@ -39,7 +39,7 @@ function Login() {
       }
       if (data.status === false) {
         localStorage.setItem("chat-app-user", JSON.stringify(data.user));
-        navitage("/");
+        navitage("/setAvatar");
       }
     }
   };
