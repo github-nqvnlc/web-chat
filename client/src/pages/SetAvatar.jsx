@@ -5,7 +5,7 @@ import loader from "../assets/loader.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { setAvatarRoute } from "../utils/APIRoutes";
+// import { setAvatarRoute } from "../utils/APIRoutes";
 import { Buffer } from "buffer";
 
 export default function SetAvatar() {
@@ -27,17 +27,29 @@ export default function SetAvatar() {
     if (selectedAvatar === undefined) {
       toast.error("Please select an avatar", toastOptions);
     } else {
+<<<<<<< HEAD
       const user = await JSON.parse(localStorage.getItem('chat-app-user'));
       const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
         image: avatars[selectedAvatar],
       });
 
       console.log(data);
+=======
+      const user = await JSON.parse(localStorage.getItem("chat-app-user"));
+      const data =  await axios.post(`${setAvatars}/${user._id}`, {
+        image: avatars[selectedAvatar],
+      });
+      console.log({data});
+>>>>>>> eec657b3d1c824d506caf3832c56e9d23a8bdc2f
       if (data.isSet) {
         user.isAvatarImageSet = true;
         user.avatarImage = data.image;
         localStorage.setItem("chat-app-user", JSON.stringify(user));
+<<<<<<< HEAD
         navigate("/");
+=======
+        navigate('/'); 
+>>>>>>> eec657b3d1c824d506caf3832c56e9d23a8bdc2f
       } else {
         toast.error("Error setting avatar. Please try again", toastOptions);
       }
@@ -48,9 +60,13 @@ export default function SetAvatar() {
     async function fecthData() {
       const data = [];
       for (let i = 0; i < 4; i++) {
+<<<<<<< HEAD
         const image = await axios.get(
           `${api}/${Math.round(Math.random() * 1000)}`
         );
+=======
+        const image = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
+>>>>>>> eec657b3d1c824d506caf3832c56e9d23a8bdc2f
         const buffer = new Buffer(image.data);
         data.push(buffer.toString("base64"));
       }
@@ -62,6 +78,7 @@ export default function SetAvatar() {
 
   return (
     <>
+<<<<<<< HEAD
       {isLoading ? (
         <Container>
           <img src={loader} alt="loader" />
@@ -94,6 +111,36 @@ export default function SetAvatar() {
           </button>
         </Container>
       )}
+=======
+      {
+        isLoading ? <Container>
+          <img src={loader} alt="loader" />
+        </Container> : (
+          <Container>
+            <div className="title-container">
+              <h1>Pick an avatar as your profile picture</h1>
+            </div>
+            <div className="avatars">
+              {avatars.map((avatar, index) => {
+                return (
+                  <div
+                    className={`avatar ${selectedAvatar === index ? "selected" : ""
+                      }`}
+                  >
+                    <img
+                      key={index}
+                      src={`data:image/svg+xml;base64,${avatar}`}
+                      alt="avatar"
+                      onClick={() => setSelectedAvatar(index)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <button className="submit-btn" onClick={setProfilePicture}>Set as profile picture</button>
+          </Container>
+        )}
+>>>>>>> eec657b3d1c824d506caf3832c56e9d23a8bdc2f
       <ToastContainer />
     </>
   );
@@ -142,6 +189,7 @@ const Container = styled.div`
     .selected {
       border: 0.4rem solid #fff;
     }
+<<<<<<< HEAD
   }
   .submit-btn {
     background-color: #515c6d;
@@ -157,5 +205,22 @@ const Container = styled.div`
     &:hover {
       background-color: #6e6f74;
     }
+=======
+>>>>>>> eec657b3d1c824d506caf3832c56e9d23a8bdc2f
   }
+  .submit-btn {
+      background-color: #515c6d;
+      color: #fff;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      transition: 0.5s ease-in-out;
+      &:hover {
+        background-color: #6e6f74;
+      }
+    }
 `;
