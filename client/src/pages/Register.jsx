@@ -27,6 +27,9 @@ function Register() {
     draggable: true,
     theme: "dark",
   };
+
+  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
